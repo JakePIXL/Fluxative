@@ -2,6 +2,21 @@
 requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "fluxative"
+version = "0.1.1"
+description = "Generate LLM context files from Git repositories"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = ["gitingest>=0.1.4"]
+
+[project.scripts]
+fluxative = "src.llmgentool:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0.0", "ruff>=0.9.10"]
+
 [tool.pytest.ini_options]
 pythonpath = "src"
 addopts = ["--import-mode=importlib"]
