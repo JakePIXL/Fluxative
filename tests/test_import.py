@@ -1,5 +1,3 @@
-
-
 def test_import():
     """Test that modules can be imported directly."""
     import converter
