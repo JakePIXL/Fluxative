@@ -31,14 +31,16 @@ def extract_file_contents(gitingest_file: str) -> Dict[str, str]:
     file_contents = {}
 
     try:
-        with open(gitingest_file, 'r', encoding='utf-8') as f:
+        with open(gitingest_file, "r", encoding="utf-8") as f:
             content = f.read()
     except Exception as e:
         print(f"Error reading file: {e}")
         sys.exit(1)
 
     # Extract file blocks
-    file_blocks = re.findall(r'={48}\nFile: (.*?)\n={48}\n(.*?)(?=\n\n={48}|\Z)', content, re.DOTALL)
+    file_blocks = re.findall(
+        r"={48}\nFile: (.*?)\n={48}\n(.*?)(?=\n\n={48}|\Z)", content, re.DOTALL
+    )
 
     for file_path, file_content in file_blocks:
         # Clean up the file path (remove any leading/trailing whitespace)
@@ -62,7 +64,7 @@ def expand_links(content: str, file_contents: Dict[str, str]) -> str:
     """
     print("Expanding links with file contents...")
     # Find all markdown links
-    links = re.findall(r'\[([^\]]+)\]\(([^)]+)\)', content)
+    links = re.findall(r"\[([^\]]+)\]\(([^)]+)\)", content)
     expanded_content = content
 
     link_count = 0
@@ -76,7 +78,9 @@ def expand_links(content: str, file_contents: Dict[str, str]) -> str:
 
             # Replace directly without using regex to avoid escape sequence issues
             search_text = f"[{link_text}]({link_path})"
-            expanded_content = expanded_content.replace(search_text, search_text + formatted_content)
+            expanded_content = expanded_content.replace(
+                search_text, search_text + formatted_content
+            )
             link_count += 1
 
     print(f"Expanded {link_count} links with file contents")
@@ -100,7 +104,7 @@ def generate_ctx_file(llms_txt_path: str, gitingest_file: str, ctx_output_path: 
 
     # Read the llms.txt file
     try:
-        with open(llms_txt_path, 'r', encoding='utf-8') as f:
+        with open(llms_txt_path, "r", encoding="utf-8") as f:
             content = f.read()
     except Exception as e:
         print(f"Error reading llms file: {e}")
@@ -114,7 +118,7 @@ def generate_ctx_file(llms_txt_path: str, gitingest_file: str, ctx_output_path: 
 
     # Write the expanded content to the output file
     try:
-        with open(ctx_output_path, 'w', encoding='utf-8') as f:
+        with open(ctx_output_path, "w", encoding="utf-8") as f:
             f.write(expanded_content)
         print(f"Successfully generated {ctx_output_path}")
     except Exception as e:

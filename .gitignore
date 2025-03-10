@@ -21,6 +21,7 @@ sdist/
 var/
 .installed.cfg
 *.egg
+.pytest_cache/
 
 # Virtual environments
 .venv

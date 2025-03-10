@@ -66,12 +66,6 @@ Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 - Limit the first line to 72 characters or less
 - Reference issues and pull requests after the first line
 
-## Testing
-
-- Add tests for new features
-- Ensure all tests pass before submitting a pull request
-- Follow test naming conventions in the existing codebase
-
 ## Documentation
 
 - Update documentation when changing functionality
