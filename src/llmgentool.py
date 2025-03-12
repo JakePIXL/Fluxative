@@ -24,8 +24,9 @@ from typing import Optional
 from urllib.parse import urlparse
 
 # Import from local modules
-from converter import parse_gitingest_output, generate_llms_txt
-from expander import generate_ctx_file
+from typing import Dict
+from src.converter import parse_gitingest_output, generate_llms_txt
+from src.expander import generate_ctx_file
 
 try:
     from gitingest import ingest
@@ -44,8 +45,16 @@ def get_repo_name(repo_path_or_url: str) -> str:
     Returns:
         Repository name for use in file naming and directory creation
     """
-    # Check if it's a URL
+
+    # Check if its the CWD
+    if repo_path_or_url == ".":
+        path = os.path.normpath(os.getcwd())
+        return os.path.basename(path)
+
+    # Else Check if it's a URL
+
     parsed_url = urlparse(repo_path_or_url)
+
     if parsed_url.scheme and parsed_url.netloc:
         # It's a URL, extract the last part of the path
         path_parts = parsed_url.path.strip("/").split("/")
@@ -61,7 +70,7 @@ def get_repo_name(repo_path_or_url: str) -> str:
         return os.path.basename(path)
 
 
-def process_repository(repo_path_or_url: str, output_dir: Optional[str] = None) -> str:
+def process_repository(repo_path_or_url: str, output_dir: Optional[str] = None) -> tuple[str, Dict]:
     """
     Process a repository to generate LLM context files.
 
@@ -147,7 +156,7 @@ def process_repository(repo_path_or_url: str, output_dir: Optional[str] = None) 
             print("\nGeneration process complete!")
             print(f"All output files are in: {output_path}")
 
-            return output_path
+            return output_path, repo_info
 
         except Exception as e:
             print(f"Error processing repository: {e}")
@@ -176,9 +185,9 @@ def main():
         args = parser.parse_args()
 
     # Process the repository
-    output_path = process_repository(args.repo_path_or_url, args.output_dir)
+    output_path, repo_info = process_repository(args.repo_path_or_url, args.output_dir)
 
-    repo_name = get_repo_name(args.repo_path_or_url)
+    repo_name = repo_info["name"]
     print(f"Files generated in: {output_path}")
     print(f"  - {repo_name}-raw.txt (Original GitIngest output with full structure)")
     print(f"  - {repo_name}-llms.txt (Basic repository summary)")

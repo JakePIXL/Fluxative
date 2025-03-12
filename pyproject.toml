@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fluxative"
-version = "0.1.1"
+version = "0.1.2"
 description = "Generate LLM context files from Git repositories"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,6 +12,9 @@ license = { text = "MIT" }
 dependencies = ["gitingest>=0.1.4"]
 
 [project.scripts]
+fluxative = "src.llmgentool:main"
+
+[project.entry-points.uvx]
 fluxative = "src.llmgentool:main"
 
 [project.optional-dependencies]
