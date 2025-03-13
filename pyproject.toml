@@ -1,10 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel", "setuptools_scm[toml]>=7.1.0"]
+requires = ["setuptools", "wheel", "setuptools_scm[toml]"]
 build-backend = "setuptools.build_meta"
-backend-path = [
-  ".",
-  "src",
-]
 
 [project]
 name = "fluxative"
