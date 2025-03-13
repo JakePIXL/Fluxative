@@ -1,5 +1,13 @@
 # Fluxative
 
+[<img src="https://img.shields.io/pypi/v/fluxative" alt="PyPI - Version">](https://pypi.org/project/fluxative/)
+[<img src="https://img.shields.io/pypi/l/fluxative" alt="PyPI - License">](https://github.com/JakePIXL/fluxative/blob/main/LICENSE)
+[<img src="https://img.shields.io/github/issues/JakePIXL/fluxative" alt="GitHub Issues or Pull Requests">](https://github.com/JakePIXL/fluxative/issues)
+[<img src="https://img.shields.io/github/actions/workflow/status/JakePIXL/Fluxative/python-publish.yml" alt="GitHub Actions Workflow Status">](https://github.com/JakePIXL/fluxative/actions)
+[<img src="https://img.shields.io/pypi/dm/fluxative" alt="PyPI - Downloads">](https://pypi.org/project/fluxative/)
+[<img src="https://img.shields.io/github/stars/JakePIXL/fluxative" alt="GitHub Repo stars">](https://github.com/JakePIXL/fluxative/stargazers)
+
+
 A tool to convert Git repositories into standardized context files for LLM consumption. Consists of three main components:
 
 - `converter.py`: Converts GitIngest output to llms.txt and llms-full.txt formats
@@ -23,7 +31,7 @@ A tool to convert Git repositories into standardized context files for LLM consu
 ### Using uv
 
 ```bash
-uv install git+https://github.com/JakePIXL/Fluxative.git
+uv install fluxative
 ```
 
 ### From source
