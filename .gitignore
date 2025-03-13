@@ -47,3 +47,4 @@ CLAUDE.md
 *-docs/
 *-temp.txt
 *-llms*.txt
+*_version.py

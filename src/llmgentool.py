@@ -127,6 +127,7 @@ def process_repository(repo_path_or_url: str, output_dir: Optional[str] = None) 
             # Store the raw structure elements in repo_info to preserve it
             repo_info["summary"] = summary
             repo_info["tree"] = tree
+            repo_info["name"] = repo_name
 
             # Generate llms.txt and llms-full.txt
             llms_txt_path = os.path.join(temp_dir, f"{repo_name}-llms.txt")

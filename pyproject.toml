@@ -1,15 +1,29 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=61.0.0", "wheel", "setuptools_scm[toml]>=7.1.0"]
 build-backend = "setuptools.build_meta"
+backend-path = [
+  ".",
+  "src",
+]
 
 [project]
 name = "fluxative"
-version = "0.1.2"
+dynamic = ["version"]
 description = "Generate LLM context files from Git repositories"
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [{ name = 'JakePIXL' }]
 license = { text = "MIT" }
 dependencies = ["gitingest>=0.1.4"]
+
+[project.urls]
+Homepage = "https://github.com/JakePIXL/fluxative"
+Repository = "https://github.com/JakePIXL/fluxative"
+Issues = "https://github.com/JakePIXL/fluxative/issues"
+Changelog = "https://github.com/JakePIXL/fluxative/releases"
+
+[tool.setuptools_scm]
+version_file = "src/_version.py"
 
 [project.scripts]
 fluxative = "src.llmgentool:main"
@@ -20,8 +34,12 @@ fluxative = "src.llmgentool:main"
 [project.optional-dependencies]
 dev = ["pytest>=7.0.0", "ruff>=0.9.10"]
 
+[tool.setuptools]
+packages = ["src"]
+package-dir = { "" = "." }
+
 [tool.pytest.ini_options]
-pythonpath = "src"
+pythonpath = "."
 addopts = ["--import-mode=importlib"]
 
 [tool.ruff]
