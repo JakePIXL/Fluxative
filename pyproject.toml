@@ -22,10 +22,10 @@ Changelog = "https://github.com/JakePIXL/fluxative/releases"
 version_file = "src/_version.py"
 
 [project.scripts]
-fluxative = "src.llmgentool:main"
+fluxative = "src.fluxative:app"
 
 [project.entry-points.uvx]
-fluxative = "src.llmgentool:main"
+fluxative = "src.fluxative:app"
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0.0", "ruff>=0.9.10"]
