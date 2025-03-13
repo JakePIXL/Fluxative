@@ -5,28 +5,34 @@ Fluxative Tool
 This script integrates converter.py and expander.py to generate standardized context files
 for LLMs from either a local repository or a GitHub URL.
 
-It generates:
-- llms.txt: Basic repository summary
-- llms-full.txt: Comprehensive repository summary
-- llms-ctx.txt: Basic summary with file contents
-- llms-ctx-full.txt: Comprehensive summary with file contents
+It can generate the following:
+    - llms.txt: Basic repository summary
+    - llms-ctx.txt: Basic summary with file contents
+
+with --full-context enabled:
+    - llms-full.txt: Comprehensive repository summary
+    - llms-ctx-full.txt: Comprehensive summary with file contents
 
 Usage:
-    python llmgentool.py <repo_path_or_url> [output_directory]
+    python fluxative.py <repo_path_or_url> [output_directory]
 """
 
 import sys
 import os
 import shutil
 import tempfile
-import argparse
 from typing import Optional
+from typing_extensions import Annotated
 from urllib.parse import urlparse
 
 # Import from local modules
 from typing import Dict
 from src.converter import parse_gitingest_output, generate_llms_txt
 from src.expander import generate_ctx_file
+
+import typer
+
+app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 
 try:
     from gitingest import ingest
@@ -70,7 +76,12 @@ def get_repo_name(repo_path_or_url: str) -> str:
         return os.path.basename(path)
 
 
-def process_repository(repo_path_or_url: str, output_dir: Optional[str] = None) -> tuple[str, Dict]:
+def process_repository(
+    repo_path_or_url: str,
+    output_dir: Optional[str] = None,
+    full_context: bool = False,
+    dump_raw: bool = False,
+) -> tuple[str, Dict]:
     """
     Process a repository to generate LLM context files.
 
@@ -134,14 +145,16 @@ def process_repository(repo_path_or_url: str, output_dir: Optional[str] = None) 
             llms_full_txt_path = os.path.join(temp_dir, f"{repo_name}-llms-full.txt")
 
             generate_llms_txt(repo_info, llms_txt_path, full_version=False)
-            generate_llms_txt(repo_info, llms_full_txt_path, full_version=True)
+            if full_context:
+                generate_llms_txt(repo_info, llms_full_txt_path, full_version=True)
 
             # Generate context files
             ctx_output_path = os.path.join(temp_dir, f"{repo_name}-llms-ctx.txt")
             ctx_full_output_path = os.path.join(temp_dir, f"{repo_name}-llms-full-ctx.txt")
 
             generate_ctx_file(llms_txt_path, gitingest_file, ctx_output_path)
-            generate_ctx_file(llms_full_txt_path, gitingest_file, ctx_full_output_path)
+            if full_context:
+                generate_ctx_file(llms_full_txt_path, gitingest_file, ctx_full_output_path)
 
             # Copy files to output directory
             for file in [
@@ -164,29 +177,28 @@ def process_repository(repo_path_or_url: str, output_dir: Optional[str] = None) 
             sys.exit(1)
 
 
-def main():
-    """Main function"""
-    parser = argparse.ArgumentParser(
-        description="Generate LLM context files from a repository or GitHub URL"
-    )
-    parser.add_argument("repo_path_or_url", help="Local path or URL to a git repository")
-    parser.add_argument(
-        "--output-dir",
-        "-o",
-        help="Directory to save output files (default: current directory)",
-        default=None,
-    )
-
-    # Support for command-line usage within a package like 'uvx'
-    if len(sys.argv) > 1 and sys.argv[1] == "fluxative":
-        # Handle the case where this is called as 'uvx fluxative <args>'
-        args = parser.parse_args(sys.argv[2:])
-    else:
-        # Normal command-line usage
-        args = parser.parse_args()
+@app.command(no_args_is_help=True)
+def main(
+    repo_path_or_url: Annotated[str, typer.Argument(help="Local path or URL to a git repository")],
+    output_dir: Annotated[
+        Optional[str],
+        typer.Option(
+            "--output-dir", "-o", help="Directory to save output files (default: current directory)"
+        ),
+    ] = None,
+    dump_raw: Annotated[
+        bool, typer.Option("--dump-raw", "-d", help="Dump raw GitIngest output")
+    ] = False,
+    full_context: Annotated[
+        bool, typer.Option("--full-context", "-f", help="Generate full context files")
+    ] = False,
+):
+    """
+    Generate LLM context files from a repository.
+    """
 
     # Process the repository
-    output_path, repo_info = process_repository(args.repo_path_or_url, args.output_dir)
+    output_path, repo_info = process_repository(repo_path_or_url, output_dir)
 
     repo_name = repo_info["name"]
     print(f"Files generated in: {output_path}")
@@ -198,4 +210,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    app()
