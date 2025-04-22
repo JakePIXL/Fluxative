@@ -10,7 +10,10 @@ readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = 'JakePIXL' }]
 license = { text = "MIT" }
-dependencies = ["gitingest>=0.1.4", "typer>=0.15.2"]
+dependencies = [
+ "gitingest>=0.1.4",
+ "typer>=0.15.2",
+]
 
 [project.urls]
 Homepage = "https://github.com/JakePIXL/fluxative"

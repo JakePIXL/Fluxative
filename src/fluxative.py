@@ -127,10 +127,11 @@ def process_repository(
             print(f"Generated gitingest output at {gitingest_file}")
 
             # Save the raw gitingest output to the final directory as well
-            raw_output_file = os.path.join(output_path, f"{repo_name}-raw.txt")
-            with open(raw_output_file, "w", encoding="utf-8") as f:
-                f.write(gitingest_output)
-            print(f"Saved raw gitingest output to {raw_output_file}")
+            if dump_raw:
+                raw_output_file = os.path.join(output_path, f"{repo_name}-raw.txt")
+                with open(raw_output_file, "w", encoding="utf-8") as f:
+                    f.write(gitingest_output)
+                print(f"Saved raw gitingest output to {raw_output_file}")
 
             # Parse the GitIngest output
             repo_info = parse_gitingest_output(gitingest_file, is_text=False)
@@ -159,13 +160,20 @@ def process_repository(
             # Copy files to output directory
             for file in [
                 llms_txt_path,
-                llms_full_txt_path,
                 ctx_output_path,
-                ctx_full_output_path,
             ]:
                 output_file = os.path.join(output_path, os.path.basename(file))
                 shutil.copy(file, output_file)
                 print(f"Copied {file} to {output_file}")
+
+            if full_context:
+                for file in [
+                    llms_full_txt_path,
+                    ctx_full_output_path,
+                ]:
+                    output_file = os.path.join(output_path, os.path.basename(file))
+                    shutil.copy(file, output_file)
+                    print(f"Copied {file} to {output_file}")
 
             print("\nGeneration process complete!")
             print(f"All output files are in: {output_path}")
@@ -198,15 +206,20 @@ def main(
     """
 
     # Process the repository
-    output_path, repo_info = process_repository(repo_path_or_url, output_dir)
+    output_path, repo_info = process_repository(
+        repo_path_or_url, output_dir, full_context, dump_raw
+    )
 
     repo_name = repo_info["name"]
     print(f"Files generated in: {output_path}")
-    print(f"  - {repo_name}-raw.txt (Original GitIngest output with full structure)")
+    if dump_raw:
+        print(f"  - {repo_name}-raw.txt (Original GitIngest output with full structure)")
     print(f"  - {repo_name}-llms.txt (Basic repository summary)")
-    print(f"  - {repo_name}-llms-full.txt (Comprehensive repository summary)")
+    if full_context:
+        print(f"  - {repo_name}-llms-full.txt (Comprehensive repository summary)")
     print(f"  - {repo_name}-llms-ctx.txt (Basic summary with file contents)")
-    print(f"  - {repo_name}-llms-full-ctx.txt (Comprehensive summary with file contents)")
+    if full_context:
+        print(f"  - {repo_name}-llms-full-ctx.txt (Comprehensive summary with file contents)")
 
 
 if __name__ == "__main__":
